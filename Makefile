@@ -16,5 +16,8 @@ composer.phar:
 composer/update:
 	$(COMPOSER) self-update
 
+test:
+	./vendor/bin/phpunit tests
+
 vendor/update: composer.phar
 	$(COMPOSER) update
