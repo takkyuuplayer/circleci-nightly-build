@@ -17,10 +17,7 @@ jobs:
             - ./vendor
           key: v1-dependencies-{{ checksum "composer.json" }}
       - run: ./vendor/bin/phpunit --coverage-html coverage --log-junit phpunit-output/phpunit/results.xml
-      - store_test_results:
-          path: phpunit-output
-      - store_artifacts:
-          path: coverage
+      - run: make test
   coverage:
     docker:
       - image: circleci/php
@@ -36,4 +33,23 @@ jobs:
           paths:
             - ./vendor
           key: v1-dependencies-{{ checksum "composer.json" }}
-      - run: make test
+      - run: ./vendor/bin/phpunit --coverage-html coverage --log-junit phpunit-output/phpunit/results.xml
+      - store_test_results:
+          path: phpunit-output
+      - store_artifacts:
+          path: coverage
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build
+  coverage:
+    triggers:
+      - schedule:
+          cron: "0 7 0 0 0"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - coverage
