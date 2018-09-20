@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/php:7.1.5-browsers
+      - image: circleci/php
     working_directory: ~/repo
     steps:
       - checkout
@@ -16,4 +16,8 @@ jobs:
           paths:
             - ./vendor
           key: v1-dependencies-{{ checksum "composer.json" }}
-      - run: phpunit --coverage-html=$CIRCLE_ARTIFACTS
+      - run: ./vendor/bin/phpunit --coverage-html coverage --log-junit phpunit-output/phpunit/results.xml
+      - store_test_results:
+          path: phpunit-output
+      - store_artifacts:
+          path: coverage
