@@ -21,3 +21,31 @@ jobs:
           path: phpunit-output
       - store_artifacts:
           path: coverage
+  coverage:
+    docker:
+      - image: circleci/php
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "composer.json" }}
+          - v1-dependencies-
+      - run: make
+      - save_cache:
+          paths:
+            - ./vendor
+          key: v1-dependencies-{{ checksum "composer.json" }}
+      - run: make test
+workflows:
+  version: 2
+  coverage:
+    triggers:
+      - schedule:
+          cron: "0 7 0 0 0"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - coverage
