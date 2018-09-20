@@ -39,6 +39,9 @@ jobs:
       - run: make test
 workflows:
   version: 2
+  build:
+    jobs:
+      - build
   coverage:
     triggers:
       - schedule:
